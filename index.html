@@ -36,6 +36,17 @@
             align-items: center;
             justify-content: center;
         }
+        #spanishResult {
+            font-size: 1.5rem;
+            color: #764ba2;
+            text-align: center;
+            margin: 10px 0;
+            min-height: 40px;
+            font-style: italic;
+        }
+        #spanishBtn {
+            margin-top: 10px;
+        }
         .btn {
             width: 100%;
             border-radius: 25px;
@@ -73,12 +84,22 @@
                         </div>
 
                         <div id="result"></div>
+                        <div id="spanishResult"></div>
 
                         <div class="row">
                             <div class="col s12">
                                 <button class="btn waves-effect waves-light purple darken-1" id="generateBtn">
                                     <i class="material-icons left">refresh</i>
                                     Generate Random Number
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col s12">
+                                <button class="btn waves-effect waves-light teal darken-1" id="spanishBtn" style="display:none;">
+                                    <i class="material-icons left">translate</i>
+                                    Show in Spanish
                                 </button>
                             </div>
                         </div>
@@ -95,7 +116,65 @@
             const minInput = document.getElementById('min');
             const maxInput = document.getElementById('max');
             const generateBtn = document.getElementById('generateBtn');
+            const spanishBtn = document.getElementById('spanishBtn');
             const resultDiv = document.getElementById('result');
+            const spanishResultDiv = document.getElementById('spanishResult');
+            let currentNumber = null;
+
+            // Spanish number translation function
+            function numberToSpanish(num) {
+                if (num === 0) return 'cero';
+                
+                const ones = ['', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve'];
+                const teens = ['diez', 'once', 'doce', 'trece', 'catorce', 'quince', 'dieciséis', 'diecisiete', 'dieciocho', 'diecinueve'];
+                const tens = ['', '', 'veinte', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa'];
+                const hundreds = ['', 'ciento', 'doscientos', 'trescientos', 'cuatrocientos', 'quinientos', 'seiscientos', 'setecientos', 'ochocientos', 'novecientos'];
+                
+                if (num < 0) return 'menos ' + numberToSpanish(-num);
+                
+                if (num < 10) return ones[num];
+                
+                if (num < 20) return teens[num - 10];
+                
+                if (num < 30) {
+                    if (num === 20) return 'veinte';
+                    return 'veinti' + ones[num - 20];
+                }
+                
+                if (num < 100) {
+                    const ten = Math.floor(num / 10);
+                    const one = num % 10;
+                    return tens[ten] + (one > 0 ? ' y ' + ones[one] : '');
+                }
+                
+                if (num === 100) return 'cien';
+                
+                if (num < 1000) {
+                    const hundred = Math.floor(num / 100);
+                    const rest = num % 100;
+                    return hundreds[hundred] + (rest > 0 ? ' ' + numberToSpanish(rest) : '');
+                }
+                
+                if (num < 1000000) {
+                    const thousand = Math.floor(num / 1000);
+                    const rest = num % 1000;
+                    let result = '';
+                    
+                    if (thousand === 1) {
+                        result = 'mil';
+                    } else {
+                        result = numberToSpanish(thousand) + ' mil';
+                    }
+                    
+                    if (rest > 0) {
+                        result += ' ' + numberToSpanish(rest);
+                    }
+                    
+                    return result;
+                }
+                
+                return num.toString(); // For numbers larger than 999,999
+            }
 
             generateBtn.addEventListener('click', function() {
                 const min = parseInt(minInput.value);
@@ -122,6 +201,7 @@
 
                 // Generate random number
                 const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+                currentNumber = randomNumber;
                 
                 // Display result with animation
                 resultDiv.style.opacity = '0';
@@ -131,12 +211,38 @@
                     resultDiv.style.opacity = '1';
                 }, 100);
 
+                // Show the Spanish button and clear previous Spanish translation
+                spanishBtn.style.display = 'block';
+                spanishResultDiv.textContent = '';
+
                 // Show success toast
                 M.toast({
                     html: '<i class="material-icons left">check_circle</i>Random number generated!',
                     classes: 'green darken-1',
                     displayLength: 2000
                 });
+            });
+
+            // Spanish button click handler
+            spanishBtn.addEventListener('click', function() {
+                if (currentNumber !== null) {
+                    const spanishText = numberToSpanish(currentNumber);
+                    
+                    // Display Spanish translation with animation
+                    spanishResultDiv.style.opacity = '0';
+                    setTimeout(function() {
+                        spanishResultDiv.textContent = spanishText.charAt(0).toUpperCase() + spanishText.slice(1);
+                        spanishResultDiv.style.transition = 'opacity 0.5s';
+                        spanishResultDiv.style.opacity = '1';
+                    }, 100);
+                    
+                    // Show success toast
+                    M.toast({
+                        html: '<i class="material-icons left">translate</i>Translated to Spanish!',
+                        classes: 'teal darken-1',
+                        displayLength: 2000
+                    });
+                }
             });
 
             // Allow Enter key to trigger generation
