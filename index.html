@@ -56,6 +56,25 @@
         .input-field label {
             font-size: 1rem;
         }
+        .qr-section {
+            margin-top: 30px;
+            padding: 20px;
+            text-align: center;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .qr-section h5 {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        #qrcode {
+            display: inline-block;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body>
@@ -107,8 +126,24 @@
                 </div>
             </div>
         </div>
+        
+        <!-- QR Code Section -->
+        <div class="row">
+            <div class="col s12 m8 offset-m2 l6 offset-l3">
+                <div class="qr-section">
+                    <h5>
+                        <i class="material-icons" style="vertical-align: middle;">qr_code_2</i>
+                        Share This Page
+                    </h5>
+                    <p class="grey-text">Scan the QR code to access this page on your device</p>
+                    <div id="qrcode"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <!-- QR Code Library -->
+    <script src="qrcode.min.js"></script>
     <!-- Materialize JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script>
@@ -256,6 +291,20 @@
                 if (e.key === 'Enter') {
                     generateBtn.click();
                 }
+            });
+
+            // Generate QR Code
+            // Dynamic URL is used by default (current page URL)
+            // To use a static URL instead, replace window.location.href with your desired URL
+            const pageURL = window.location.href;
+            
+            new QRCode(document.getElementById("qrcode"), {
+                text: pageURL,
+                width: 200,
+                height: 200,
+                colorDark: "#667eea",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
             });
         });
     </script>
