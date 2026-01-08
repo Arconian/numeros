@@ -294,9 +294,9 @@
             });
 
             // Generate QR Code
-            // Using a static URL by default. To make it dynamic, replace the URL with: window.location.href
-            const pageURL = window.location.href; // Dynamic URL (current page URL)
-            // For static URL, you can replace above line with: const pageURL = 'https://example.com';
+            // Dynamic URL is used by default (current page URL)
+            // To use a static URL instead, replace window.location.href with your desired URL
+            const pageURL = window.location.href;
             
             new QRCode(document.getElementById("qrcode"), {
                 text: pageURL,
